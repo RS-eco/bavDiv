@@ -1,0 +1,168 @@
+---
+title: "bavDiv - Species richness changes in Bavaria, Germany: Differences between protected and non-protected areas"
+output: 
+  github_document:
+     html_preview: true
+editor_options: 
+  chunk_output_type: console
+bibliography: refs.bib
+csl: ddi.csl
+link-citations: yes
+---
+
+<!--
+output: 
+  word_document:
+      reference_docx: my-styles.docx
+-->
+
+<!-- 
+
+See ggcoefstats for nice forest plot with statistical details!!!
+=> see also emmeans examples in ggstatsplot, search github repo!!!
+
+- Ich denke, es wäre wichtig, die IUCN-Kategorien zu vermeiden und die deutschen Kategorien zu nutzen. Das könnte dann zwar etwas kleinteilig werden, aber auch aufschlussreich sein. Intuitiv würde ich auf jeden Fall die Landschaftsschutzgebiete (LSG) getrennt behandeln; außerdem würde ich FFH-/Vogelschutzgebiete als gemeinsame Kategorie nehmen, einmal mit Nationalparks und NSGs zusammen und einmal getrennt (wobei die oft auch beides sind). Schau aber mal, welche Kategorien es noch gibt und wir können dann mal überlegen, wie wir daraus eine sinnvolle Klassifizierung machen können…
+- Was sind die non-designated areas?
+
+- Show AIC, Adjusted R2, p-values for models! (Table 1)
+
+- Figure S4: Remove colour legend, split into two columns!
+- Figure S5: Add 0 as grey background + Add outline of Bavaria! + Increase colour legend!
+
+- Sort code into correct order and split into different Figures/Supp Figures, see Reptile1.5
+
+- Use ggstatsplot/ggdist for Figures?
+
+- Run multiple models (different variable combinations)
+=> Create table with models against variables (p-values), Adj. R2 and AIC
+=> Keep month in final model or not? (+ Filter out month == 0)
+
+- Check out Schafft et al. 2021 for Forest plot with mean + ci + effect as table on the side!
+
+- Suppl: Add scale comparison (Tk4tel vs. TK25) (Ref: Chase et al. 2019 - Oikos)
+- Suppl: Add time comparison => Not just upscaling, but smoothing (grainchanger)
+
+Potential ideas:
+- Change to Bayesian/Regression tree/BART model (Statistical Rethinking, stan_glmer, stan_lmer, brms: https://www.rensvandeschoot.com/tutorials/generalised-linear-models-with-brms/, ...)
+- Look at non-linear relationships, plot model output/summary
+- Tips on mixed effects models: Silk et al. 2020 - PeerJ
+-->
+
+<!--
+**Running head:** Protected areas help to maintain Bavarian biodiversity
+
+**Main message (in 25 words or less):** ...
+
+## Abstract:
+
+**Aim:** Biodiversity is declining globally, but we still lack precise knowledge on regional biodiversity changes and their drivers.
+
+**Location:** Bavaria, Germany, central Europe
+
+**Time period:** 1989-2019
+
+**Major taxa studied:** Aves, Lepidoptera, Odonata, Orthoptera
+
+**Methods:** Here we assess a unique species occurrence data set for Bavaria and analyse species richness changes over time across four taxa (Aves, Odonata, Orthoptera and Lepidoptera). We assess how changes in species richness vary with protection to see if protected areas provide a save haven for biodiversity.
+
+**Results:**
+
+**Main conclusions:**
+
+**KEYWORDS:** biodiversity, insect, lepidoptera, orthoptera, odonata, time series, conservation, protection, europe
+
+## Introduction
+
+## Methods
+
+### Species data
+
+*  ASK data of 4 taxa (Aves, Lepidoptera, Odonata & Orthoptera)
+*  Time period: 1985 - 2019
+
+### Protected area data
+
+* ProtectedPlanet data for Germany cropped by extent of Bavaria
+
+### Data Analysis
+
+*  Linear mixed effects model
+
+*  We have dropped all data where month = 0. 
+Need to consider this if month is included in the model!
+
+## Results
+
+## Discussion
+
+## Conclusion
+
+## References
+
+## Data Accessibility Statement
+
+The ASK database is not publicly available, but has been kindly provided by the Bavarian State Agency for the Environment (Bayerisches Landesamt für Umwelt, LfU). The code and summarised data used for the performed data analysis and the presented figures, can be found at https://github.com/xxxx/xxxx.
+-->
+  
+## Tables
+
+**Table 1.** Model performance (BIC) of different variable combinations for each taxon (Aves, Lepidoptera, Odonata, Orthoptera) and all taxa together (Total).
+
+```{r, echo=F, message=FALSE, asis=T}
+library(dplyr)
+
+# Load data
+load("data/df_mod_glance.rda")
+
+# Create table
+df_mod_glance %>% dplyr::select(formula, class_order, BIC) %>%
+  tidyr::pivot_wider(names_from="class_order", values_from="BIC") %>%
+  knitr::kable()
+```
+
+**Table 2.** Model variance (R2) of different variable combinations for each taxon (Aves, Lepidoptera, Odonata, Orthoptera) and all taxa together (Total).
+
+```{r, echo=F, message=FALSE, asis=T}
+# Load data
+load("data/df_mod_var.rda")
+
+# Create table
+df_mod_var %>% dplyr::select(formula, class_order, R2) %>%
+  mutate(R2 = round(R2, digits=3)) %>%
+  tidyr::pivot_wider(names_from="class_order", values_from="R2") %>%
+  knitr::kable()
+```
+
+## Figures
+
+![](figures/Figure1-1.png)
+
+**Figure 1.** a) Number of observations recorded per year, b) number of observations per grid cell, c) Species richness recorded per year, d) Species richness per grid cell. Different colours represent number of species per taxonomic group.
+
+![](figures/Figure2-1.png)
+
+**Figure 2.** Generalized additive model (GAM) plots showing the partial effects on total species richness. Tick marks on the x-axis are observed data points. The y-axis represents the effect function of isolation on Kipp's distance. Dark gray shadows indicate 95% confidence bounds. (Note that the scale of the y-axis differs between the two columns).
+
+![](figures/Figure3-1.png)
+
+**Figure 3.** Observed and modeled species richness over time for three randomly selected sites. Modeled species richness was predicted for a sampling effort of N = 500.
+
+![](figures/Figure4-1.png)
+
+**Figure 4.** a) past (1985) and b) present (2018) modeled species richness, as well as the mean modeled species richness over time for Bavaria. Modeled species richness was predicted for a sampling effort of N = 500.
+
+![](figures/Figure5-1.png)
+
+**Figure 5.** Map of percentage cover per grid cell for the different IUCN protection categories.
+
+![](figures/Figure6-1.png)
+
+**Figure 6.** Randomly sampled locations with sufficient observations (N \>= 20) for non-protected grid cells (Protection \< 20 %, N = 68, black) and protected grid cells (Protection \>= 20 %, N = 68) for each IUCN category present (II, III-V, V and Not-Reported, N = 17).
+
+![](figures/Figure7-1.png)
+
+**Figure 7.** Plot of species richness over time separately for each taxonomic group and for protected versus non-protected areas.
+
+![](figures/Figure8-1.png)
+
+**Figure 8.** Plot of species richness, sampling effort and species richness/sampling effort over time for protected areas divided into the different IUCN categories.
